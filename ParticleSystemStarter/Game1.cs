@@ -15,6 +15,8 @@ namespace ParticleSystemStarter
         ParticleSystem particleSystem;
         Texture2D particleTexture;
         private Random random = new Random();
+        public Pan fryingPan = new Pan(250, 200);
+        public Hamburger rawMeat = new Hamburger(600, 10);
 
 
         public Game1()
@@ -46,6 +48,8 @@ namespace ParticleSystemStarter
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            fryingPan.LoadContent(Content);
+            rawMeat.LoadContent(Content);
             particleTexture = Content.Load<Texture2D>("particle");
             particleSystem = new ParticleSystem(GraphicsDevice, 1000, particleTexture);
             particleSystem.Emitter = new Vector2(100, 100);
@@ -113,6 +117,11 @@ namespace ParticleSystemStarter
 
             // TODO: Add your drawing code here
             particleSystem.Draw();
+
+            spriteBatch.Begin();
+            fryingPan.Draw(spriteBatch);
+            rawMeat.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
