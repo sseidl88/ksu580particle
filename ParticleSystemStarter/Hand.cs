@@ -19,7 +19,11 @@ namespace ParticleSystemStarter
 
     public class Hand
     {
-        public BoundingRectangle handPosition;
+        public BoundingRectangle position;
+        public Rectangle RectBounds
+        {
+            get { return position; }
+        }
         public Texture2D hand;
         ContentManager content;
         MouseState mouse;
@@ -37,9 +41,11 @@ namespace ParticleSystemStarter
 
         public Hand(int mouseX, int mouseY, MouseState mouseState)
         {
-            handPosition.X = mouseX;
-            handPosition.Y = mouseY;
+            position.X = mouseX;
+            position.Y = mouseY;
             mouse = mouseState;
+            position.Height = 54;
+            position.Width = 54;
         }
 
         public void LoadContent(ContentManager content)
@@ -88,7 +94,7 @@ namespace ParticleSystemStarter
             FRAME_HEIGHT // Height
             );
 
-            spriteBatch.Draw(hand, new Vector2(handPosition.X, handPosition.Y),source, Color.White);
+            spriteBatch.Draw(hand, new Vector2(position.X, position.Y),source, Color.White);
         }
     }
 }

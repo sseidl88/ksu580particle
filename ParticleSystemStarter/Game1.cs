@@ -5,9 +5,13 @@ using System;
 
 namespace ParticleSystemStarter
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
+    public enum handCarry
+    {
+        empty = 0,
+        rawMeat = 1,
+        cookedBurger = 2,
+        burntBurger = 3,
+    }
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -18,6 +22,7 @@ namespace ParticleSystemStarter
         public Pan fryingPan = new Pan(250, 200);
         public Hamburger rawMeat = new Hamburger(600, 10);
         public Hand hand;
+        public handCarry handContent = handCarry.empty;
 
 
         public Game1()
@@ -118,6 +123,22 @@ namespace ParticleSystemStarter
 
             // TODO: Add your update logic here
             particleSystem.Update(gameTime);
+            fryingPan.Update(gameTime);
+
+            //picking up raw meat
+            if (hand.RectBounds.Intersects(rawMeat.RectBounds) && 
+                hand.animateState == handAnimation.closed && handContent == handCarry.empty)
+            {
+                handContent = handCarry.rawMeat;
+            }
+            //droping raw meat in the pan
+            if(hand.RectBounds.Intersects(fryingPan.RectBounds) && 
+                hand.animateState == handAnimation.open && handContent == handCarry.rawMeat)
+            {
+                handContent = handCarry.empty;
+                fryingPan.animateState = PanAnimation.raw;
+                fryingPan.timer = 0;
+            }
 
             base.Update(gameTime);
         }

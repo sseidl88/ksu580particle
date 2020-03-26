@@ -13,15 +13,22 @@ namespace ParticleSystemStarter
     public class Hamburger
     {
 
-        public BoundingRectangle meatPosition;
+        public BoundingRectangle position;
         public Texture2D meat;
         ContentManager content;
+
+        public Rectangle RectBounds
+        {
+            get { return position; }
+        }
 
 
         public Hamburger(int x, int y)
         {
-            meatPosition.X = x;
-            meatPosition.Y = y;
+            position.X = x;
+            position.Y = y;
+            position.Height = 160;
+            position.Width = 160;
         }
 
         public void LoadContent(ContentManager content)
@@ -37,7 +44,7 @@ namespace ParticleSystemStarter
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(meat, new Vector2(meatPosition.X, meatPosition.Y), Color.White);
+            spriteBatch.Draw(meat, new Vector2(position.X, position.Y), Color.White);
         }
     }
 }

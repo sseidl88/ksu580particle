@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ParticleSystemStarter
 {
-    enum PanAnimation
+    public enum PanAnimation
     {
         empty = 4,
         raw = 1,
@@ -20,24 +20,33 @@ namespace ParticleSystemStarter
 
     public class Pan
     {
-        public BoundingRectangle panPosition;
+        public BoundingRectangle position;
+        public Rectangle RectBounds
+        {
+            get { return position; }
+        }
         public Texture2D pan;
         ContentManager content;
 
         const int ANIMATION_FRAME_RATE = 124;
         TimeSpan timerRate;
-        PanAnimation animateState;
+        public PanAnimation animateState;
 
         int frame;
         const int FRAME_WIDTH = 350;
 
         const int FRAME_HEIGHT = 200;
 
+        //cookingtimer
+        public float timer = 0;
+
 
         public Pan(int x, int y)
         {
-            panPosition.X = x;
-            panPosition.Y = y;
+            position.X = x;
+            position.Y = y;
+            position.Height = 200;
+            position.Width = 320;
         }
 
         public void LoadContent(ContentManager content)
@@ -49,7 +58,19 @@ namespace ParticleSystemStarter
 
         public void Update(GameTime gameTime)
         {
-            
+            if(animateState == PanAnimation.raw)
+            {
+                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            if(timer > 5 && timer < 10)
+            {
+                animateState = PanAnimation.done;
+                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if(timer > 10)
+            {
+                animateState = PanAnimation.burnt;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -61,7 +82,7 @@ namespace ParticleSystemStarter
             FRAME_HEIGHT // Height
             );
 
-            spriteBatch.Draw(pan, new Vector2(panPosition.X, panPosition.Y),source, Color.White);
+            spriteBatch.Draw(pan, new Vector2(position.X, position.Y),source, Color.White);
         }
 
     }
