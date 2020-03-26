@@ -17,6 +17,7 @@ namespace ParticleSystemStarter
         private Random random = new Random();
         public Pan fryingPan = new Pan(250, 200);
         public Hamburger rawMeat = new Hamburger(600, 10);
+        public Hand hand;
 
 
         public Game1()
@@ -50,6 +51,7 @@ namespace ParticleSystemStarter
             // TODO: use this.Content to load your game content here
             fryingPan.LoadContent(Content);
             rawMeat.LoadContent(Content);
+           // hand.LoadContent(Content);
             particleTexture = Content.Load<Texture2D>("particle");
             particleSystem = new ParticleSystem(GraphicsDevice, 1000, particleTexture);
             particleSystem.Emitter = new Vector2(100, 100);
@@ -59,6 +61,8 @@ namespace ParticleSystemStarter
             particleSystem.SpawnParticle = (ref Particle particle) =>
             {
                 MouseState mouse = Mouse.GetState();
+                hand = new Hand(mouse.X, mouse.Y, mouse);
+                hand.LoadContent(Content);
                 particle.Position = new Vector2(mouse.X, mouse.Y);
                 particle.Velocity = new Vector2(
                     MathHelper.Lerp(-50, 50, (float)random.NextDouble()), // X between -50 and 50
@@ -68,6 +72,17 @@ namespace ParticleSystemStarter
                 particle.Color = Color.Gold;
                 particle.Scale = 1f;
                 particle.Life = 1.0f;
+
+                //animate hand
+                if (mouse.LeftButton == ButtonState.Pressed)
+                {
+                    hand.animateState = handAnimation.closed;
+                }
+                else
+                {
+                    hand.animateState = handAnimation.open;
+                }
+
             };
 
             // Set the UpdateParticle method
@@ -79,6 +94,7 @@ namespace ParticleSystemStarter
                 particle.Life -= deltaT;
             };
 
+            
         }
 
         /// <summary>
@@ -103,7 +119,6 @@ namespace ParticleSystemStarter
             // TODO: Add your update logic here
             particleSystem.Update(gameTime);
 
-
             base.Update(gameTime);
         }
 
@@ -119,8 +134,12 @@ namespace ParticleSystemStarter
             particleSystem.Draw();
 
             spriteBatch.Begin();
+
+            
             fryingPan.Draw(spriteBatch);
             rawMeat.Draw(spriteBatch);
+            hand.Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);

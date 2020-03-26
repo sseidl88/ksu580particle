@@ -44,6 +44,7 @@
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Hamburger.cs" />
+    <Compile Include="Hand.cs" />
     <Compile Include="Pan.cs" />
     <Compile Include="Particle.cs" />
     <Compile Include="ParticleSystem.cs" />
