@@ -26,6 +26,11 @@ namespace ParticleSystemStarter
         public handCarry handContent = handCarry.empty;
         public Plate plate = new Plate(300, 90);
         public Buns bun = new Buns(10, 10);
+        public Bell bell = new Bell(40, 350);
+        SpriteFont font; 
+
+        //score
+        int score = 0;
 
 
         public Game1()
@@ -57,10 +62,12 @@ namespace ParticleSystemStarter
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            font = Content.Load<SpriteFont>("font");
             fryingPan.LoadContent(Content);
             rawMeat.LoadContent(Content);
             plate.LoadContent(Content);
             bun.LoadContent(Content);
+            bell.LoadContent(Content);
            // hand.LoadContent(Content);
             particleTexture = Content.Load<Texture2D>("particle");
             particleSystem = new ParticleSystem(GraphicsDevice, 1000, particleTexture);
@@ -191,6 +198,16 @@ namespace ParticleSystemStarter
                 handContent = handCarry.empty;
                 plate.animateState = PlateAnimation.burger;
             }
+            //ringing the bell
+            if(hand.RectBounds.Intersects(bell.RectBounds) && 
+                hand.animateState == handAnimation.closed && handContent == handCarry.empty)
+            {
+                if(plate.animateState == PlateAnimation.burger)
+                {
+                    score += 10;
+                }
+                plate.animateState = PlateAnimation.empty;
+            }
 
             base.Update(gameTime);
         }
@@ -207,12 +224,14 @@ namespace ParticleSystemStarter
             particleSystem.Draw();
 
             spriteBatch.Begin();
+            //scoreboard
+            spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(350, 20), Color.White);
 
-            
             fryingPan.Draw(spriteBatch);
             rawMeat.Draw(spriteBatch);
             plate.Draw(spriteBatch);
             bun.Draw(spriteBatch);
+            bell.Draw(spriteBatch);
             //draw hand last so it goes ver everything else
             hand.Draw(spriteBatch);
 

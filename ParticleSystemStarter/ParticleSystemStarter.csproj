@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Bell.cs" />
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="Buns.cs" />
     <Compile Include="Game1.cs" />
