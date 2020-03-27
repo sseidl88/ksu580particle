@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BoundingRectangle.cs" />
+    <Compile Include="Buns.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Hamburger.cs" />
     <Compile Include="Hand.cs" />

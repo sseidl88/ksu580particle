@@ -11,6 +11,7 @@ namespace ParticleSystemStarter
         rawMeat = 1,
         cookedBurger = 2,
         burntBurger = 3,
+        bun = 4,
     }
     public class Game1 : Game
     {
@@ -19,11 +20,12 @@ namespace ParticleSystemStarter
         ParticleSystem particleSystem;
         Texture2D particleTexture;
         private Random random = new Random();
-        public Pan fryingPan = new Pan(250, 200);
+        public Pan fryingPan = new Pan(270, 260);
         public Hamburger rawMeat = new Hamburger(600, 10);
         public Hand hand;
         public handCarry handContent = handCarry.empty;
-        public Plate plate = new Plate(20, 100);
+        public Plate plate = new Plate(300, 90);
+        public Buns bun = new Buns(10, 10);
 
 
         public Game1()
@@ -58,6 +60,7 @@ namespace ParticleSystemStarter
             fryingPan.LoadContent(Content);
             rawMeat.LoadContent(Content);
             plate.LoadContent(Content);
+            bun.LoadContent(Content);
            // hand.LoadContent(Content);
             particleTexture = Content.Load<Texture2D>("particle");
             particleSystem = new ParticleSystem(GraphicsDevice, 1000, particleTexture);
@@ -147,6 +150,7 @@ namespace ParticleSystemStarter
                 fryingPan.animateState == PanAnimation.done)
             {
                 handContent = handCarry.cookedBurger;
+                fryingPan.timer = 0;
                 fryingPan.animateState = PanAnimation.empty;
             }
             //dropping burger on empty plate
@@ -156,6 +160,36 @@ namespace ParticleSystemStarter
             {
                 handContent = handCarry.empty;
                 plate.animateState = PlateAnimation.patty;
+            }
+            //adding burger to plate with a bun on it
+            if (hand.RectBounds.Intersects(plate.RectBounds) &&
+                hand.animateState == handAnimation.open &&
+                handContent == handCarry.cookedBurger && plate.animateState == PlateAnimation.bun)
+            {
+                handContent = handCarry.empty;
+                plate.animateState = PlateAnimation.burger;
+            }
+            //adding bun to hand
+            if (hand.RectBounds.Intersects(bun.RectBounds) && 
+                hand.animateState == handAnimation.closed && handContent == handCarry.empty)
+            {
+                handContent = handCarry.bun;
+            }
+            //adding bun to empty plate
+            if(hand.RectBounds.Intersects(plate.RectBounds) && 
+                hand.animateState == handAnimation.open && 
+                plate.animateState == PlateAnimation.empty && handContent == handCarry.bun)
+            {
+                handContent = handCarry.empty;
+                plate.animateState = PlateAnimation.bun;
+            }
+            //adding bun to plate with burger on it
+            if (hand.RectBounds.Intersects(plate.RectBounds) &&
+               hand.animateState == handAnimation.open &&
+               plate.animateState == PlateAnimation.patty && handContent == handCarry.bun)
+            {
+                handContent = handCarry.empty;
+                plate.animateState = PlateAnimation.burger;
             }
 
             base.Update(gameTime);
@@ -178,6 +212,8 @@ namespace ParticleSystemStarter
             fryingPan.Draw(spriteBatch);
             rawMeat.Draw(spriteBatch);
             plate.Draw(spriteBatch);
+            bun.Draw(spriteBatch);
+            //draw hand last so it goes ver everything else
             hand.Draw(spriteBatch);
 
             spriteBatch.End();
