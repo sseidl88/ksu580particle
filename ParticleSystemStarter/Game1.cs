@@ -18,9 +18,12 @@ namespace ParticleSystemStarter
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         ParticleSystem particleSystem;
+        ParticleSystem steam;
+        Texture2D steamTexture;
         Texture2D particleTexture;
         private Random random = new Random();
         public Pan fryingPan = new Pan(270, 260);
+        public int steamSpawnX;
         public Hamburger rawMeat = new Hamburger(600, 10);
         public Hand hand;
         public handCarry handContent = handCarry.empty;
@@ -73,6 +76,11 @@ namespace ParticleSystemStarter
             particleSystem = new ParticleSystem(GraphicsDevice, 1000, particleTexture);
             particleSystem.Emitter = new Vector2(100, 100);
             particleSystem.SpawnPerFrame = 4;
+            //steam
+            steamTexture = Content.Load<Texture2D>("steam");
+            steam = new ParticleSystem(GraphicsDevice, 100, steamTexture);
+            steam.Emitter = new Vector2(100, 100);
+            steam.SpawnPerFrame = 4;
 
             // Set the SpawnParticle method
             particleSystem.SpawnParticle = (ref Particle particle) =>
@@ -101,6 +109,25 @@ namespace ParticleSystemStarter
                 }
 
             };
+            //STEAM
+            steam.SpawnParticle = (ref Particle particle) =>
+            {
+                steamSpawnX = (int)random.Next(300, 500);
+                particle.Position = new Vector2(steamSpawnX, fryingPan.position.Y + 50);
+                particle.Velocity = new Vector2(
+                    MathHelper.Lerp(-50, 50, (float)random.NextDouble()), // X between -50 and 50
+                    MathHelper.Lerp(0, 100, (float)random.NextDouble()) // Y between 0 and 100
+                    );
+                particle.Acceleration = 0.1f * new Vector2(0, (float)-random.NextDouble());
+                particle.Color = Color.Ivory;
+                particle.Scale = 1f;
+                // particle.Life = 3.0f;
+                particle.Life = 10;
+
+
+            };
+
+
 
             // Set the UpdateParticle method
             particleSystem.UpdateParticle = (float deltaT, ref Particle particle) =>
@@ -110,8 +137,16 @@ namespace ParticleSystemStarter
                 particle.Scale -= deltaT;
                 particle.Life -= deltaT;
             };
+            //steam update
+            steam.UpdateParticle = (float deltaT, ref Particle particle) =>
+            {
+                particle.Velocity += deltaT * particle.Acceleration;
+                particle.Position -= deltaT * particle.Velocity;
+                particle.Scale -= deltaT;
+                particle.Life -= deltaT;
+            };
 
-            
+
         }
 
         /// <summary>
@@ -135,6 +170,7 @@ namespace ParticleSystemStarter
 
             // TODO: Add your update logic here
             particleSystem.Update(gameTime);
+            steam.Update(gameTime);
             fryingPan.Update(gameTime);
 
             //picking up raw meat
@@ -222,12 +258,16 @@ namespace ParticleSystemStarter
 
             // TODO: Add your drawing code here
             particleSystem.Draw();
+            
 
             spriteBatch.Begin();
             //scoreboard
             spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(350, 20), Color.White);
 
             fryingPan.Draw(spriteBatch);
+            //steam
+            if(fryingPan.animateState == PanAnimation.raw || fryingPan.animateState == PanAnimation.done)
+            steam.Draw();
             rawMeat.Draw(spriteBatch);
             plate.Draw(spriteBatch);
             bun.Draw(spriteBatch);

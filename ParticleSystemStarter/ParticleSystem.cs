@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace ParticleSystemStarter
 {
     public delegate void ParticleSpawner(ref Particle particle);
+
     public delegate void ParticleUpdater(float deltaT, ref Particle particle);
 
     public class ParticleSystem
