@@ -23,6 +23,7 @@ namespace ParticleSystemStarter
         public Hamburger rawMeat = new Hamburger(600, 10);
         public Hand hand;
         public handCarry handContent = handCarry.empty;
+        public Plate plate = new Plate(20, 100);
 
 
         public Game1()
@@ -56,6 +57,7 @@ namespace ParticleSystemStarter
             // TODO: use this.Content to load your game content here
             fryingPan.LoadContent(Content);
             rawMeat.LoadContent(Content);
+            plate.LoadContent(Content);
            // hand.LoadContent(Content);
             particleTexture = Content.Load<Texture2D>("particle");
             particleSystem = new ParticleSystem(GraphicsDevice, 1000, particleTexture);
@@ -139,6 +141,22 @@ namespace ParticleSystemStarter
                 fryingPan.animateState = PanAnimation.raw;
                 fryingPan.timer = 0;
             }
+            //adding burger to hand
+            if(hand.RectBounds.Intersects(fryingPan.RectBounds) && 
+                hand.animateState == handAnimation.closed && handContent == handCarry.empty &&
+                fryingPan.animateState == PanAnimation.done)
+            {
+                handContent = handCarry.cookedBurger;
+                fryingPan.animateState = PanAnimation.empty;
+            }
+            //dropping burger on empty plate
+            if(hand.RectBounds.Intersects(plate.RectBounds) &&
+                hand.animateState == handAnimation.open && 
+                handContent == handCarry.cookedBurger && plate.animateState == PlateAnimation.empty)
+            {
+                handContent = handCarry.empty;
+                plate.animateState = PlateAnimation.patty;
+            }
 
             base.Update(gameTime);
         }
@@ -159,6 +177,7 @@ namespace ParticleSystemStarter
             
             fryingPan.Draw(spriteBatch);
             rawMeat.Draw(spriteBatch);
+            plate.Draw(spriteBatch);
             hand.Draw(spriteBatch);
 
             spriteBatch.End();
